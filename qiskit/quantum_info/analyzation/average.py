@@ -7,6 +7,8 @@
 
 """A collection of useful functions for post processing results."""
 
+import numpy as np
+
 
 def average_data(counts, observable):
     """Compute the mean value of an diagonal observable.
@@ -27,7 +29,17 @@ def average_data(counts, observable):
     """
     temp = 0
     tot = sum(counts.values())
-    for key in counts:
-        if key in observable:
-            temp += counts[key] * observable[key] / tot
+    counted_states = sorted(counts.keys())
+    no_of_states = len(counted_states)
+    # Convert dictionary of states to a sorted list
+    if type(observable) is dict:
+        observable = [observable[state] for state in counted_states]
+    observable = np.array(observable)
+    # Flatten a two-dimensional diagonal observable matrix
+    if observable.ndim == 2:
+        observable = np.diagonal(observable)
+    # Perform summation
+    for state_no in range(no_of_states):
+        state = counted_states[state_no]
+        temp += counts[state] * observable[state_no] / tot
     return temp
