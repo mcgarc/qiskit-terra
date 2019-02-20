@@ -30,16 +30,16 @@ def average_data(counts, observable):
     temp = 0
     tot = sum(counts.values())
     counted_states = sorted(counts.keys())
-    no_of_states = len(counted_states)
     # Convert dictionary of states to a sorted list
     if type(observable) is dict:
-        observable = [observable[state] for state in counted_states]
+        observed_states = sorted(observable.keys())
+        observable = [observable[state] for state in observed_states]
+    # Create 1D array from diagonal if passed a matrix
     observable = np.array(observable)
-    # Flatten a two-dimensional diagonal observable matrix
     if observable.ndim == 2:
         observable = np.diagonal(observable)
     # Perform summation
-    for state_no in range(no_of_states):
-        state = counted_states[state_no]
+    for state in counted_states:
+        state_no = int(state, 2)
         temp += counts[state] * observable[state_no] / tot
     return temp
